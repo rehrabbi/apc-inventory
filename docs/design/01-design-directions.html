@@ -1,0 +1,326 @@
+<style>
+  :root{
+    /* shared semantic system (accessible, distinct from brand red) */
+    --ok:#1E7A48; --ok-bg:#E4F1E9; --ok-ink:#14532D;
+    --warn:#9A6700; --warn-bg:#FBEFCF; --warn-ink:#6B4700;
+    --soon:#B45309; --soon-bg:#FBEAD3; --soon-ink:#7C3B06;
+    --crit:#C1121F; --crit-bg:#FBE3E3; --crit-ink:#7A0C14;
+
+    --page:#EDE7E1; --page-ink:#241E1A; --page-muted:#6B615A; --page-line:#DBD1C8;
+    --frame-card:#F6F1EC;
+    --font: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --page:#1A1614; --page-ink:#F1E9E3; --page-muted:#A79C93; --page-line:#332B26; --frame-card:#221C19; }
+  }
+  :root[data-theme="dark"]{ --page:#1A1614; --page-ink:#F1E9E3; --page-muted:#A79C93; --page-line:#332B26; --frame-card:#221C19; }
+  :root[data-theme="light"]{ --page:#EDE7E1; --page-ink:#241E1A; --page-muted:#6B615A; --page-line:#DBD1C8; --frame-card:#F6F1EC; }
+
+  *{ box-sizing:border-box; }
+  body{ margin:0; }
+  .wrap{
+    font-family:var(--font); background:var(--page); color:var(--page-ink);
+    padding:clamp(20px,4vw,48px); line-height:1.5;
+  }
+  .container{ max-width:1080px; margin:0 auto; }
+
+  .pagehead h1{ font-size:clamp(24px,4vw,34px); margin:0 0 6px; letter-spacing:-.02em; text-wrap:balance; }
+  .pagehead p{ margin:0; color:var(--page-muted); max-width:64ch; }
+  .brandbar{ display:flex; gap:10px; flex-wrap:wrap; margin:22px 0 10px; }
+  .chip{ display:flex; align-items:center; gap:9px; background:var(--frame-card); border:1px solid var(--page-line);
+    border-radius:10px; padding:8px 12px; font-size:12.5px; }
+  .sw{ width:20px; height:20px; border-radius:6px; border:1px solid rgba(0,0,0,.12); }
+  .mono{ font-variant-numeric:tabular-nums; font-family:ui-monospace,"Cascadia Code",Consolas,monospace; }
+
+  .tension{ background:var(--frame-card); border:1px solid var(--page-line); border-left:4px solid var(--crit);
+    border-radius:12px; padding:14px 16px; margin:20px 0 34px; font-size:14px; }
+  .tension b{ color:var(--page-ink); }
+
+  .dir{ margin:0 0 40px; }
+  .dir-head{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:4px; }
+  .dir-head .n{ font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--crit); }
+  .dir-head h2{ font-size:21px; margin:0; letter-spacing:-.01em; }
+  .dir-head .rec{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
+    background:var(--ok-bg); color:var(--ok-ink); padding:3px 8px; border-radius:999px; }
+  .dir-desc{ color:var(--page-muted); margin:0 0 14px; max-width:70ch; font-size:14px; }
+  .swatches{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+  .swatches .s{ display:flex; flex-direction:column; gap:4px; align-items:center; font-size:10px; color:var(--page-muted); width:64px; }
+  .swatches .box{ width:100%; height:34px; border-radius:8px; border:1px solid rgba(0,0,0,.1); }
+
+  /* ---------- app preview (scoped by --c-* tokens per direction) ---------- */
+  .app{
+    background:var(--c-bg); color:var(--c-ink); border:1px solid var(--c-line);
+    border-radius:14px; overflow:hidden; box-shadow:0 12px 30px -18px rgba(30,20,15,.5);
+  }
+  .app *{ font-family:var(--font); }
+  .topbar{ display:flex; align-items:center; gap:14px; padding:12px 16px; background:var(--c-bar);
+    border-bottom:1px solid var(--c-barline); }
+  .logo{ width:26px; height:26px; border-radius:7px; background:var(--c-brand); color:#fff;
+    display:grid; place-items:center; font-weight:800; font-size:11px; letter-spacing:.02em; flex:none; }
+  .brandname{ font-weight:700; font-size:14px; color:var(--c-baront); }
+  .nav{ display:flex; gap:4px; margin-left:8px; flex-wrap:wrap; }
+  .nav a{ font-size:12.5px; padding:6px 10px; border-radius:8px; color:var(--c-navink); text-decoration:none; }
+  .nav a.on{ background:var(--c-navon-bg); color:var(--c-navon-ink); font-weight:600;
+    box-shadow:var(--c-navon-shadow); }
+  .who{ margin-left:auto; font-size:12px; color:var(--c-muted); display:flex; align-items:center; gap:8px; }
+  .avatar{ width:24px;height:24px;border-radius:50%; background:var(--c-brand); color:#fff; display:grid; place-items:center; font-size:10px; font-weight:700; }
+
+  .body{ padding:16px; display:flex; flex-direction:column; gap:16px; }
+  .alert{ display:flex; align-items:center; gap:10px; font-size:13px; padding:10px 12px; border-radius:var(--c-r);
+    background:var(--soon-bg); color:var(--soon-ink); border:1px solid color-mix(in srgb, var(--soon) 30%, transparent); }
+  .alert .dot{ width:8px;height:8px;border-radius:50%; background:var(--soon); flex:none; }
+
+  .hub{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; }
+  .task{ display:flex; flex-direction:column; gap:6px; padding:14px; border-radius:var(--c-r);
+    background:var(--c-surface); border:1px solid var(--c-line); cursor:default; }
+  .task .ico{ width:30px;height:30px;border-radius:8px; display:grid; place-items:center; font-size:15px;
+    background:var(--c-taskico-bg); color:var(--c-taskico-ink); }
+  .task .t{ font-weight:600; font-size:13.5px; }
+  .task .s{ font-size:11.5px; color:var(--c-muted); }
+
+  .tiles{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; }
+  .tile{ background:var(--c-surface); border:1px solid var(--c-line); border-radius:var(--c-r); padding:12px 14px; }
+  .tile .k{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--c-muted); }
+  .tile .v{ font-size:24px; font-weight:750; margin-top:4px; font-variant-numeric:tabular-nums; }
+  .tile .v.bad{ color:var(--crit); } .tile .v.warnv{ color:var(--soon); }
+
+  .panel{ background:var(--c-surface); border:1px solid var(--c-line); border-radius:var(--c-r); overflow:hidden; }
+  .panel h3{ margin:0; padding:12px 14px; font-size:13px; border-bottom:1px solid var(--c-line); }
+  .scrollx{ overflow-x:auto; }
+  table{ width:100%; border-collapse:collapse; font-size:12.5px; min-width:520px; }
+  th,td{ text-align:left; padding:9px 14px; border-bottom:1px solid var(--c-line); white-space:nowrap; }
+  th{ font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--c-muted); font-weight:600; }
+  td.num{ font-variant-numeric:tabular-nums; text-align:right; }
+  tr:last-child td{ border-bottom:none; }
+  .badge{ display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600;
+    padding:3px 9px; border-radius:999px; }
+  .badge .d{ width:6px;height:6px;border-radius:50%; }
+  .b-ok{ background:var(--ok-bg); color:var(--ok-ink); } .b-ok .d{ background:var(--ok); }
+  .b-low{ background:var(--warn-bg); color:var(--warn-ink); } .b-low .d{ background:var(--warn); }
+  .b-soon{ background:var(--soon-bg); color:var(--soon-ink); } .b-soon .d{ background:var(--soon); }
+  .b-exp{ background:var(--crit-bg); color:var(--crit-ink); } .b-exp .d{ background:var(--crit); }
+
+  .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .input{ flex:1; min-width:160px; padding:9px 12px; border-radius:var(--c-r); border:1px solid var(--c-line);
+    background:var(--c-surface); color:var(--c-ink); font-size:13px; }
+  .input::placeholder{ color:var(--c-muted); }
+  .btn{ padding:9px 16px; border-radius:var(--c-r); font-size:13px; font-weight:600; border:1px solid transparent; cursor:default; }
+  .btn.primary{ background:var(--c-primary-bg); color:var(--c-primary-ink); border-color:var(--c-primary-bd); box-shadow:var(--c-primary-shadow); }
+  .btn.secondary{ background:transparent; color:var(--c-ink); border-color:var(--c-line); }
+  .btn.danger{ background:transparent; color:var(--crit); border-color:color-mix(in srgb,var(--crit) 45%,transparent); }
+
+  /* ============ DIRECTION A — Controlled Signal (charcoal primary, red = accent) ============ */
+  [data-dir="a"]{
+    --c-bg:#F1EBE5; --c-surface:#FFFFFF; --c-ink:#211C19; --c-muted:#7A6F66; --c-line:#E7DED6;
+    --c-brand:#D81F26; --c-r:12px;
+    --c-bar:#FFFFFF; --c-barline:#E7DED6; --c-baront:#211C19;
+    --c-navink:#7A6F66; --c-navon-bg:#F4E7E7; --c-navon-ink:#B71C22; --c-navon-shadow:inset 0 -2px 0 var(--c-brand);
+    --c-taskico-bg:#F4E7E7; --c-taskico-ink:#C11F26;
+    --c-primary-bg:#211C19; --c-primary-ink:#FDF6F1; --c-primary-bd:#211C19; --c-primary-shadow:0 2px 6px -2px rgba(33,28,25,.5);
+  }
+  /* ============ DIRECTION B — Brand-Forward (red bar + red primary buttons) ============ */
+  [data-dir="b"]{
+    --c-bg:#F5F2EF; --c-surface:#FFFFFF; --c-ink:#1C1613; --c-muted:#6E645C; --c-line:#EADFD8;
+    --c-brand:#D81F26; --c-r:10px;
+    --c-bar:#C41A20; --c-barline:#A81419; --c-baront:#FFFFFF;
+    --c-navink:#F6D3D4; --c-navon-bg:rgba(255,255,255,.16); --c-navon-ink:#FFFFFF; --c-navon-shadow:none;
+    --c-taskico-bg:#FCE7E7; --c-taskico-ink:#C11F26;
+    --c-primary-bg:#D81F26; --c-primary-ink:#FFFFFF; --c-primary-bd:#D81F26; --c-primary-shadow:0 2px 8px -2px rgba(216,31,38,.55);
+  }
+  [data-dir="b"] .who{ color:#F6D3D4; } [data-dir="b"] .avatar{ background:#fff; color:#C41A20; }
+  /* ============ DIRECTION C — Warm Minimal (airy cream, restrained red) ============ */
+  [data-dir="c"]{
+    --c-bg:#F8F3ED; --c-surface:#FDFBF8; --c-ink:#2A231F; --c-muted:#9A8C80; --c-line:#EDE4DA;
+    --c-brand:#CE1F26; --c-r:16px;
+    --c-bar:#F8F3ED; --c-barline:#EDE4DA; --c-baront:#2A231F;
+    --c-navink:#9A8C80; --c-navon-bg:transparent; --c-navon-ink:#CE1F26; --c-navon-shadow:none;
+    --c-taskico-bg:#F6ECE3; --c-taskico-ink:#CE1F26;
+    --c-primary-bg:#2A231F; --c-primary-ink:#F8F3ED; --c-primary-bd:#2A231F; --c-primary-shadow:none;
+  }
+  [data-dir="c"] .app{ box-shadow:0 20px 44px -26px rgba(42,35,31,.4); }
+  [data-dir="c"] .body{ padding:22px; gap:20px; }
+  [data-dir="c"] .nav a.on{ text-decoration:underline; text-underline-offset:6px; text-decoration-thickness:2px; }
+
+  .foot{ color:var(--page-muted); font-size:13px; margin-top:8px; }
+</style>
+
+<div class="wrap">
+ <div class="container">
+  <div class="pagehead">
+    <h1>APC Inventory — Visual Design Directions</h1>
+    <p>Your brand palette (APC red, warm black, cream) applied to a real inventory screen, three ways. The directions differ mainly in <b>how loudly red is used</b> — the core decision. Semantic colors (green/amber/red alerts) are shared and deliberately kept separate from the brand.</p>
+  </div>
+
+  <div class="brandbar">
+    <span class="chip"><span class="sw" style="background:#D81F26"></span>APC Red <span class="mono">#D81F26</span></span>
+    <span class="chip"><span class="sw" style="background:#171210"></span>Warm Black <span class="mono">#171210</span></span>
+    <span class="chip"><span class="sw" style="background:#F3EAE6"></span>Cream <span class="mono">#F3EAE6</span></span>
+    <span class="chip"><span class="sw" style="background:#8B8178"></span>Warm Grey <span class="mono">#8B8178</span></span>
+  </div>
+
+  <div class="tension">
+    <b>The red problem, solved:</b> in inventory, red = danger (expired, critical). So brand red is used only for identity and key actions; routine alerts use <b style="color:var(--ok-ink)">green</b> / <b style="color:var(--soon-ink)">amber</b>, and <b style="color:var(--crit-ink)">red</b> on data always means "needs attention." When red appears on a row, it <i>means</i> something.
+  </div>
+
+  <!-- ================= DIRECTION A ================= -->
+  <section class="dir">
+    <div class="dir-head"><span class="n">Direction A</span><h2>Controlled Signal</h2><span class="rec">Recommended</span></div>
+    <p class="dir-desc">Warm charcoal drives the interface; red is a controlled accent (logo, active tab, key highlights). Calmest and most readable — red on data always reads as an alert, never as decoration. Best fit for daily operational use.</p>
+    <div class="swatches">
+      <div class="s"><span class="box" style="background:#F1EBE5"></span>Canvas</div>
+      <div class="s"><span class="box" style="background:#FFFFFF"></span>Surface</div>
+      <div class="s"><span class="box" style="background:#211C19"></span>Primary</div>
+      <div class="s"><span class="box" style="background:#D81F26"></span>Accent</div>
+      <div class="s"><span class="box" style="background:#1E7A48"></span>Success</div>
+      <div class="s"><span class="box" style="background:#B45309"></span>Warning</div>
+      <div class="s"><span class="box" style="background:#C1121F"></span>Critical</div>
+    </div>
+    <div class="app" data-dir="a">
+      <div class="topbar">
+        <span class="logo">APC</span><span class="brandname">Inventory</span>
+        <nav class="nav"><a class="on">Home</a><a>Receive</a><a>Sell</a><a>Events</a><a>Stock</a></nav>
+        <span class="who"><span>Jireh · Manager</span><span class="avatar">J</span></span>
+      </div>
+      <div class="body">
+        <div class="alert"><span class="dot"></span>5 products near expiry · 2 expired need write-off</div>
+        <div class="hub">
+          <div class="task"><span class="ico">&#128229;</span><span class="t">Receive Stock</span><span class="s">Log a delivery</span></div>
+          <div class="task"><span class="ico">&#128722;</span><span class="t">Record Sale</span><span class="s">Online order</span></div>
+          <div class="task"><span class="ico">&#8617;</span><span class="t">Return</span><span class="s">Customer return</span></div>
+          <div class="task"><span class="ico">&#128465;</span><span class="t">Write-off</span><span class="s">Damage / expiry</span></div>
+        </div>
+        <div class="tiles">
+          <div class="tile"><div class="k">Total SKUs</div><div class="v">92</div></div>
+          <div class="tile"><div class="k">Low Stock</div><div class="v warnv">7</div></div>
+          <div class="tile"><div class="k">Near-Expiry</div><div class="v warnv">5</div></div>
+          <div class="tile"><div class="k">Expired</div><div class="v bad">2</div></div>
+        </div>
+        <div class="panel">
+          <h3>Current Stock</h3>
+          <div class="scrollx"><table>
+            <tr><th>SKU</th><th>Product</th><th>Batch (Exp)</th><th class="num">On hand</th><th>Status</th></tr>
+            <tr><td class="mono">APC-1001</td><td>Vitamin C Serum 30ml</td><td class="mono">2026-12</td><td class="num">420</td><td><span class="badge b-ok"><span class="d"></span>In Stock</span></td></tr>
+            <tr><td class="mono">APC-1002</td><td>Collagen Drink 500ml</td><td class="mono">2026-09</td><td class="num">38</td><td><span class="badge b-low"><span class="d"></span>Low Stock</span></td></tr>
+            <tr><td class="mono">APC-1003</td><td>Aloe Soothing Gel 200ml</td><td class="mono">2026-08-28</td><td class="num">76</td><td><span class="badge b-soon"><span class="d"></span>Near-Expiry</span></td></tr>
+            <tr><td class="mono">APC-1004</td><td>Herbal Tea 20s</td><td class="mono">2026-07-30</td><td class="num">15</td><td><span class="badge b-exp"><span class="d"></span>Expired</span></td></tr>
+          </table></div>
+        </div>
+        <div class="controls">
+          <input class="input" placeholder="Search product or SKU..." />
+          <button class="btn primary">Record Sale</button>
+          <button class="btn secondary">Export</button>
+          <button class="btn danger">Write-off</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DIRECTION B ================= -->
+  <section class="dir">
+    <div class="dir-head"><span class="n">Direction B</span><h2>Brand-Forward</h2></div>
+    <p class="dir-desc">Red leads — a bold red top bar and red primary buttons put the brand front and centre. Energetic and unmistakably APC. Alerts still use amber/green, and destructive actions become red-outline so they don't blend with red primaries.</p>
+    <div class="swatches">
+      <div class="s"><span class="box" style="background:#F5F2EF"></span>Canvas</div>
+      <div class="s"><span class="box" style="background:#FFFFFF"></span>Surface</div>
+      <div class="s"><span class="box" style="background:#D81F26"></span>Primary</div>
+      <div class="s"><span class="box" style="background:#1C1613"></span>Ink</div>
+      <div class="s"><span class="box" style="background:#1E7A48"></span>Success</div>
+      <div class="s"><span class="box" style="background:#B45309"></span>Warning</div>
+      <div class="s"><span class="box" style="background:#C1121F"></span>Critical</div>
+    </div>
+    <div class="app" data-dir="b">
+      <div class="topbar">
+        <span class="logo">APC</span><span class="brandname">Inventory</span>
+        <nav class="nav"><a class="on">Home</a><a>Receive</a><a>Sell</a><a>Events</a><a>Stock</a></nav>
+        <span class="who"><span>Jireh · Manager</span><span class="avatar">J</span></span>
+      </div>
+      <div class="body">
+        <div class="alert"><span class="dot"></span>5 products near expiry · 2 expired need write-off</div>
+        <div class="hub">
+          <div class="task"><span class="ico">&#128229;</span><span class="t">Receive Stock</span><span class="s">Log a delivery</span></div>
+          <div class="task"><span class="ico">&#128722;</span><span class="t">Record Sale</span><span class="s">Online order</span></div>
+          <div class="task"><span class="ico">&#8617;</span><span class="t">Return</span><span class="s">Customer return</span></div>
+          <div class="task"><span class="ico">&#128465;</span><span class="t">Write-off</span><span class="s">Damage / expiry</span></div>
+        </div>
+        <div class="tiles">
+          <div class="tile"><div class="k">Total SKUs</div><div class="v">92</div></div>
+          <div class="tile"><div class="k">Low Stock</div><div class="v warnv">7</div></div>
+          <div class="tile"><div class="k">Near-Expiry</div><div class="v warnv">5</div></div>
+          <div class="tile"><div class="k">Expired</div><div class="v bad">2</div></div>
+        </div>
+        <div class="panel">
+          <h3>Current Stock</h3>
+          <div class="scrollx"><table>
+            <tr><th>SKU</th><th>Product</th><th>Batch (Exp)</th><th class="num">On hand</th><th>Status</th></tr>
+            <tr><td class="mono">APC-1001</td><td>Vitamin C Serum 30ml</td><td class="mono">2026-12</td><td class="num">420</td><td><span class="badge b-ok"><span class="d"></span>In Stock</span></td></tr>
+            <tr><td class="mono">APC-1002</td><td>Collagen Drink 500ml</td><td class="mono">2026-09</td><td class="num">38</td><td><span class="badge b-low"><span class="d"></span>Low Stock</span></td></tr>
+            <tr><td class="mono">APC-1003</td><td>Aloe Soothing Gel 200ml</td><td class="mono">2026-08-28</td><td class="num">76</td><td><span class="badge b-soon"><span class="d"></span>Near-Expiry</span></td></tr>
+            <tr><td class="mono">APC-1004</td><td>Herbal Tea 20s</td><td class="mono">2026-07-30</td><td class="num">15</td><td><span class="badge b-exp"><span class="d"></span>Expired</span></td></tr>
+          </table></div>
+        </div>
+        <div class="controls">
+          <input class="input" placeholder="Search product or SKU..." />
+          <button class="btn primary">Record Sale</button>
+          <button class="btn secondary">Export</button>
+          <button class="btn danger">Write-off</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DIRECTION C ================= -->
+  <section class="dir">
+    <div class="dir-head"><span class="n">Direction C</span><h2>Warm Minimal</h2></div>
+    <p class="dir-desc">Airy cream canvas, generous whitespace, soft rounded cards. Red appears only where it matters most. The gentlest, most approachable feel for non-technical staff — quiet and uncluttered, though the brand presence is subtler.</p>
+    <div class="swatches">
+      <div class="s"><span class="box" style="background:#F8F3ED"></span>Canvas</div>
+      <div class="s"><span class="box" style="background:#FDFBF8"></span>Surface</div>
+      <div class="s"><span class="box" style="background:#2A231F"></span>Primary</div>
+      <div class="s"><span class="box" style="background:#CE1F26"></span>Accent</div>
+      <div class="s"><span class="box" style="background:#1E7A48"></span>Success</div>
+      <div class="s"><span class="box" style="background:#B45309"></span>Warning</div>
+      <div class="s"><span class="box" style="background:#C1121F"></span>Critical</div>
+    </div>
+    <div class="app" data-dir="c">
+      <div class="topbar">
+        <span class="logo">APC</span><span class="brandname">Inventory</span>
+        <nav class="nav"><a class="on">Home</a><a>Receive</a><a>Sell</a><a>Events</a><a>Stock</a></nav>
+        <span class="who"><span>Jireh · Manager</span><span class="avatar">J</span></span>
+      </div>
+      <div class="body">
+        <div class="alert"><span class="dot"></span>5 products near expiry · 2 expired need write-off</div>
+        <div class="hub">
+          <div class="task"><span class="ico">&#128229;</span><span class="t">Receive Stock</span><span class="s">Log a delivery</span></div>
+          <div class="task"><span class="ico">&#128722;</span><span class="t">Record Sale</span><span class="s">Online order</span></div>
+          <div class="task"><span class="ico">&#8617;</span><span class="t">Return</span><span class="s">Customer return</span></div>
+          <div class="task"><span class="ico">&#128465;</span><span class="t">Write-off</span><span class="s">Damage / expiry</span></div>
+        </div>
+        <div class="tiles">
+          <div class="tile"><div class="k">Total SKUs</div><div class="v">92</div></div>
+          <div class="tile"><div class="k">Low Stock</div><div class="v warnv">7</div></div>
+          <div class="tile"><div class="k">Near-Expiry</div><div class="v warnv">5</div></div>
+          <div class="tile"><div class="k">Expired</div><div class="v bad">2</div></div>
+        </div>
+        <div class="panel">
+          <h3>Current Stock</h3>
+          <div class="scrollx"><table>
+            <tr><th>SKU</th><th>Product</th><th>Batch (Exp)</th><th class="num">On hand</th><th>Status</th></tr>
+            <tr><td class="mono">APC-1001</td><td>Vitamin C Serum 30ml</td><td class="mono">2026-12</td><td class="num">420</td><td><span class="badge b-ok"><span class="d"></span>In Stock</span></td></tr>
+            <tr><td class="mono">APC-1002</td><td>Collagen Drink 500ml</td><td class="mono">2026-09</td><td class="num">38</td><td><span class="badge b-low"><span class="d"></span>Low Stock</span></td></tr>
+            <tr><td class="mono">APC-1003</td><td>Aloe Soothing Gel 200ml</td><td class="mono">2026-08-28</td><td class="num">76</td><td><span class="badge b-soon"><span class="d"></span>Near-Expiry</span></td></tr>
+            <tr><td class="mono">APC-1004</td><td>Herbal Tea 20s</td><td class="mono">2026-07-30</td><td class="num">15</td><td><span class="badge b-exp"><span class="d"></span>Expired</span></td></tr>
+          </table></div>
+        </div>
+        <div class="controls">
+          <input class="input" placeholder="Search product or SKU..." />
+          <button class="btn primary">Record Sale</button>
+          <button class="btn secondary">Export</button>
+          <button class="btn danger">Write-off</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">Pick the direction that feels right (A / B / C). We'll then lock the full design system — type scale, spacing, component states, dark mode — on top of it. Colors and roundness can still be tuned after you choose.</p>
+ </div>
+</div>

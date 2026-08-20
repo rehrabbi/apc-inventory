@@ -1,0 +1,23 @@
+# Dependencies & build output
+node_modules/
+app/node_modules/
+app/dist/
+
+# Environment & secrets (never commit)
+.env
+.env.local
+app/.env
+app/.env.local
+
+# Logs & OS files
+*.log
+.DS_Store
+Thumbs.db
+
+# Local source data, internal notes & design iterations (kept out of the repo)
+SOURCES/
+UPDATES/
+SESSION-HANDOFF*.md
+
+# Local tooling config
+.claude/

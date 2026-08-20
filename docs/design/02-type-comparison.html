@@ -1,0 +1,124 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F1EBE5; --surface:#FFFFFF; --ink:#211C19; --muted:#7A6F66; --line:#E7DED6;
+    --brand:#D81F26; --primary:#211C19; --primary-ink:#FDF6F1; --r:12px;
+    --ok:#1E7A48; --ok-bg:#E4F1E9; --ok-ink:#14532D;
+    --soon:#B45309; --soon-bg:#FBEAD3; --soon-ink:#7C3B06;
+    --crit:#C1121F; --crit-bg:#FBE3E3; --crit-ink:#7A0C14;
+    --sys:-apple-system,"Segoe UI",system-ui,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--sys); }
+  .wrap{ padding:clamp(20px,4vw,44px); max-width:1180px; margin:0 auto; }
+  h1{ font-size:clamp(22px,3.5vw,30px); margin:0 0 6px; letter-spacing:-.02em; }
+  .sub{ color:var(--muted); margin:0 0 26px; max-width:66ch; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:18px; }
+
+  .col{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; }
+  .fname{ display:flex; align-items:baseline; gap:8px; margin-bottom:2px; }
+  .fname .t{ font-size:16px; font-weight:700; }
+  .fname .rec{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; background:var(--ok-bg); color:var(--ok-ink); padding:2px 7px; border-radius:999px; }
+  .fnote{ font-size:12.5px; color:var(--muted); margin:0 0 14px; }
+
+  .spec-h{ font-size:26px; font-weight:800; letter-spacing:-.02em; margin:2px 0 2px; }
+  .spec-n{ font-size:20px; font-weight:600; font-variant-numeric:tabular-nums; letter-spacing:0; }
+  .spec-p{ font-size:13px; color:var(--muted); margin:6px 0 16px; line-height:1.5; }
+
+  .tiles{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+  .tile{ border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
+  .tile .k{ font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
+  .tile .v{ font-size:22px; font-weight:700; font-variant-numeric:tabular-nums; margin-top:3px; }
+  .tile .v.bad{ color:var(--crit); } .tile .v.warn{ color:var(--soon); }
+
+  table{ width:100%; border-collapse:collapse; font-size:12.5px; margin-bottom:14px; }
+  th,td{ text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); }
+  th{ font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; }
+  td.num{ font-variant-numeric:tabular-nums; text-align:right; }
+  tr:last-child td{ border-bottom:none; }
+  .badge{ display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:999px; }
+  .badge .d{ width:5px;height:5px;border-radius:50%; }
+  .b-ok{ background:var(--ok-bg); color:var(--ok-ink); } .b-ok .d{ background:var(--ok); }
+  .b-soon{ background:var(--soon-bg); color:var(--soon-ink); } .b-soon .d{ background:var(--soon); }
+  .b-exp{ background:var(--crit-bg); color:var(--crit-ink); } .b-exp .d{ background:var(--crit); }
+
+  .row{ display:flex; gap:8px; align-items:center; }
+  .input{ flex:1; padding:8px 11px; border:1px solid var(--line); border-radius:10px; font-size:13px; font-family:inherit; color:var(--ink); }
+  .btn{ padding:8px 14px; border-radius:10px; font-size:12.5px; font-weight:600; border:none; background:var(--primary); color:var(--primary-ink); font-family:inherit; }
+
+  .f-fig{ font-family:"Figtree",var(--sys); }
+  .f-int{ font-family:"Inter",var(--sys); }
+  .f-sys{ font-family:var(--sys); }
+  .foot{ color:var(--muted); font-size:13px; margin-top:22px; }
+</style>
+
+<div class="wrap">
+  <h1>Typeface comparison — Direction A palette</h1>
+  <p class="sub">The same inventory UI in three faces. Look at the headings, the <b>numerals</b> (they matter most for stock data), and how the whole thing <i>feels</i>. Palette and layout are identical — only the font changes.</p>
+
+  <div class="grid">
+    <!-- FIGTREE -->
+    <div class="col f-fig">
+      <div class="fname"><span class="t">Figtree</span><span class="rec">Recommended</span></div>
+      <p class="fnote f-sys">Warm humanist · friendly, rounded, still crisp for data</p>
+      <div class="spec-h">APC Inventory</div>
+      <div class="spec-n">0123456789 · 420 units · ₱12,480</div>
+      <p class="spec-p">Collagen Drink 500ml — 3 batches, earliest expiry 2026-09.</p>
+      <div class="tiles">
+        <div class="tile"><div class="k">Total SKUs</div><div class="v">92</div></div>
+        <div class="tile"><div class="k">Expired</div><div class="v bad">2</div></div>
+      </div>
+      <table>
+        <tr><th>SKU</th><th class="num">On hand</th><th>Status</th></tr>
+        <tr><td>APC-1001</td><td class="num">420</td><td><span class="badge b-ok"><span class="d"></span>In Stock</span></td></tr>
+        <tr><td>APC-1003</td><td class="num">76</td><td><span class="badge b-soon"><span class="d"></span>Near-Expiry</span></td></tr>
+        <tr><td>APC-1004</td><td class="num">15</td><td><span class="badge b-exp"><span class="d"></span>Expired</span></td></tr>
+      </table>
+      <div class="row"><input class="input" placeholder="Search SKU..."><button class="btn">Record Sale</button></div>
+    </div>
+
+    <!-- INTER -->
+    <div class="col f-int">
+      <div class="fname"><span class="t">Inter</span></div>
+      <p class="fnote f-sys">Neutral professional · precise, modern, slightly corporate</p>
+      <div class="spec-h">APC Inventory</div>
+      <div class="spec-n">0123456789 · 420 units · ₱12,480</div>
+      <p class="spec-p">Collagen Drink 500ml — 3 batches, earliest expiry 2026-09.</p>
+      <div class="tiles">
+        <div class="tile"><div class="k">Total SKUs</div><div class="v">92</div></div>
+        <div class="tile"><div class="k">Expired</div><div class="v bad">2</div></div>
+      </div>
+      <table>
+        <tr><th>SKU</th><th class="num">On hand</th><th>Status</th></tr>
+        <tr><td>APC-1001</td><td class="num">420</td><td><span class="badge b-ok"><span class="d"></span>In Stock</span></td></tr>
+        <tr><td>APC-1003</td><td class="num">76</td><td><span class="badge b-soon"><span class="d"></span>Near-Expiry</span></td></tr>
+        <tr><td>APC-1004</td><td class="num">15</td><td><span class="badge b-exp"><span class="d"></span>Expired</span></td></tr>
+      </table>
+      <div class="row"><input class="input" placeholder="Search SKU..."><button class="btn">Record Sale</button></div>
+    </div>
+
+    <!-- SYSTEM -->
+    <div class="col f-sys">
+      <div class="fname"><span class="t">Segoe UI / System</span></div>
+      <p class="fnote">Native font · zero loading, familiar on Windows</p>
+      <div class="spec-h">APC Inventory</div>
+      <div class="spec-n">0123456789 · 420 units · ₱12,480</div>
+      <p class="spec-p">Collagen Drink 500ml — 3 batches, earliest expiry 2026-09.</p>
+      <div class="tiles">
+        <div class="tile"><div class="k">Total SKUs</div><div class="v">92</div></div>
+        <div class="tile"><div class="k">Expired</div><div class="v bad">2</div></div>
+      </div>
+      <table>
+        <tr><th>SKU</th><th class="num">On hand</th><th>Status</th></tr>
+        <tr><td>APC-1001</td><td class="num">420</td><td><span class="badge b-ok"><span class="d"></span>In Stock</span></td></tr>
+        <tr><td>APC-1003</td><td class="num">76</td><td><span class="badge b-soon"><span class="d"></span>Near-Expiry</span></td></tr>
+        <tr><td>APC-1004</td><td class="num">15</td><td><span class="badge b-exp"><span class="d"></span>Expired</span></td></tr>
+      </table>
+      <div class="row"><input class="input" placeholder="Search SKU..."><button class="btn">Record Sale</button></div>
+    </div>
+  </div>
+
+  <p class="foot">Tip: Figtree feels warmest and most on-brief; Inter is the neutral workhorse; System is the lightest to run. Any of them handles your data cleanly.</p>
+</div>
