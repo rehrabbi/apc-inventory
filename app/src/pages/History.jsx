@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { transactionHistory } from '../lib/api'
+import { txnLabel } from '../lib/labels'
 import { SkeletonRows } from '../components/Skeleton'
 import Banner from '../components/Banner'
 import SearchInput from '../components/SearchInput'
@@ -28,7 +29,7 @@ export default function History() {
       <div className="toolbar">
         <select className="select" style={{ maxWidth: 200 }} value={type} onChange={e => setType(e.target.value)}>
           <option value="">All types</option>
-          {types.map(t => <option key={t} value={t}>{t}</option>)}
+          {types.map(t => <option key={t} value={t}>{txnLabel(t)}</option>)}
         </select>
         <SearchInput value={q} onChange={e => setQ(e.target.value)} placeholder="Search SKU, order, note…" />
         <div className="spacer" />
@@ -43,7 +44,7 @@ export default function History() {
               {shown.map(r => (
                 <tr key={r.id}>
                   <td className="num">{r.effective_date}</td>
-                  <td>{r.type}</td>
+                  <td>{txnLabel(r.type)}</td>
                   <td className="num">{r.products?.sku ?? '·'}</td>
                   <td>{r.products?.name ?? '·'}</td>
                   <td className="num muted">{r.batches?.code ?? '·'}</td>

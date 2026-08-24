@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { dashboardData } from '../lib/api'
+import { txnLabel } from '../lib/labels'
 import Icon from '../components/Icon'
 import Banner from '../components/Banner'
 
@@ -87,7 +88,7 @@ export default function Dashboard() {
         <div className="table-wrap"><table className="data">
           <thead><tr><th scope="col">Date</th><th scope="col">Type</th><th scope="col">SKU</th><th scope="col" className="right">Qty</th><th scope="col">By</th></tr></thead>
           <tbody>
-            {d.recent.map(r => <tr key={r.id}><td className="num">{r.effective_date}</td><td>{r.type}</td><td className="num">{r.products?.sku}</td><td className="num right">{Number(r.qty)}</td><td className="muted">{r.profiles?.full_name}</td></tr>)}
+            {d.recent.map(r => <tr key={r.id}><td className="num">{r.effective_date}</td><td>{txnLabel(r.type)}</td><td className="num">{r.products?.sku}</td><td className="num right">{Number(r.qty)}</td><td className="muted">{r.profiles?.full_name}</td></tr>)}
             {d.recent.length === 0 && <tr><td colSpan="5"><div className="empty">No activity yet.</div></td></tr>}
           </tbody>
         </table></div>
