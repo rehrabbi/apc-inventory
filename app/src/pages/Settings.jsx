@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { getSettings, setSetting, listCategories, listUnits, listReasons, addLookup } from '../lib/api'
+import { getSettings, setSetting, listCategories, listUnits, listReasons, addLookup, isOwner, resetActivity, deleteEvent, listEvents } from '../lib/api'
 import Banner from '../components/Banner'
+import DangerConfirm from '../components/DangerConfirm'
 import { useToast } from '../components/Toast'
 
 export default function Settings() {
@@ -14,15 +15,35 @@ export default function Settings() {
   const [newReasonKind, setNewReasonKind] = useState('writeoff')
   const [msg, setMsg] = useState(null)
   const [busy, setBusy] = useState(false)
+  const [owner, setOwner] = useState(false)
+  const [events, setEvents] = useState([])
+  const [selEvent, setSelEvent] = useState('')
+  const [danger, setDanger] = useState(null) // null | 'reset' | 'event'
+  const [dbusy, setDbusy] = useState(false)
   const toast = useToast()
 
+  async function loadEvents() { try { setEvents(await listEvents()) } catch { /* ignore */ } }
   async function load() {
     try {
       const [s, c, u, r] = await Promise.all([getSettings(), listCategories(), listUnits(), listReasons()])
       setNearDays(s.near_expiry_days ?? '30'); setCats(c); setUnits(u); setReasons(r)
     } catch (e) { setMsg({ type: 'err', text: e.message }) }
   }
-  useEffect(() => { load() }, [])
+  useEffect(() => {
+    load()
+    isOwner().then(o => { setOwner(o); if (o) loadEvents() }).catch(() => {})
+  }, [])
+
+  async function doReset() {
+    setDbusy(true)
+    try { await resetActivity(); setDanger(null); loadEvents(); toast.success('All stock activity was reset. Your catalog was kept.') }
+    catch (e) { setMsg({ type: 'err', text: e.message }); setDanger(null) } finally { setDbusy(false) }
+  }
+  async function doDeleteEvent() {
+    setDbusy(true)
+    try { await deleteEvent(selEvent); setDanger(null); setSelEvent(''); loadEvents(); toast.success('Event deleted.') }
+    catch (e) { setMsg({ type: 'err', text: e.message }); setDanger(null) } finally { setDbusy(false) }
+  }
 
   async function saveNear() {
     if (!(Number(nearDays) > 0)) return setMsg({ type: 'err', text: 'Enter a positive number of days.' })
@@ -84,6 +105,48 @@ export default function Settings() {
           </div>
         </div>
       </div>
+
+      {owner && (
+        <div className="card danger-zone" style={{ marginTop: 22 }}>
+          <h2 className="card-h">Danger zone</h2>
+          <div className="card-b">
+            <div className="danger-row">
+              <div>
+                <strong>Reset all stock &amp; activity</strong>
+                <div className="help">Deletes every transaction, batch, and event. Your product catalog, categories, units, reasons, users, and settings are kept. A backup is saved first.</div>
+              </div>
+              <button className="btn btn-danger" onClick={() => setDanger('reset')}>Reset activity</button>
+            </div>
+            <hr className="rule" />
+            <div className="danger-row">
+              <div style={{ flex: 1, minWidth: 240 }}>
+                <strong>Delete an event</strong>
+                <div className="help">Removes the event and all of its movements. Any warehouse stock from unreturned releases is restored. A backup is saved first.</div>
+                <select className="select" aria-label="Event to delete" style={{ maxWidth: 340, marginTop: 8 }} value={selEvent} onChange={e => setSelEvent(e.target.value)}>
+                  <option value="">{events.length ? 'Select an event…' : 'No events'}</option>
+                  {events.map(ev => <option key={ev.id} value={ev.id}>{ev.name} · {ev.status}</option>)}
+                </select>
+              </div>
+              <button className="btn btn-danger" disabled={!selEvent} onClick={() => setDanger('event')}>Delete event</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {danger === 'reset' && (
+        <DangerConfirm
+          title="Reset all stock &amp; activity" confirmPhrase="RESET" confirmLabel="Reset everything" busy={dbusy}
+          description="This permanently deletes every transaction, batch, and event. Your products, categories, units, reasons, users, and settings stay. A backup is taken automatically first."
+          onConfirm={doReset} onCancel={() => setDanger(null)}
+        />
+      )}
+      {danger === 'event' && (
+        <DangerConfirm
+          title="Delete event" confirmPhrase={events.find(e => e.id === selEvent)?.name || 'DELETE'} confirmLabel="Delete event" busy={dbusy}
+          description={`This permanently deletes "${events.find(e => e.id === selEvent)?.name}" and all of its movements. A backup is taken automatically first.`}
+          onConfirm={doDeleteEvent} onCancel={() => setDanger(null)}
+        />
+      )}
     </div>
   )
 }

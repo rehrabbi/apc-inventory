@@ -134,6 +134,17 @@
 .modal .card-h .x:disabled{ opacity:.5; cursor:not-allowed; }
 .modal-foot{ display:flex; justify-content:flex-end; gap:10px; padding:14px 16px; border-top:1px solid var(--line); }
 
+/* ---- Owner danger zone ---- */
+.danger-zone{ border-color:color-mix(in srgb, var(--crit) 45%, var(--line)); }
+.danger-zone > .card-h{ color:var(--crit); }
+.danger-row{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.danger-row .help{ max-width:64ch; margin-top:3px; }
+.rule{ border:none; border-top:1px solid var(--line); margin:16px 0; }
+.danger-body p{ margin:0 0 12px; font-size:13.5px; }
+.danger-body .danger-warn{ color:var(--crit); font-weight:600; }
+.danger-body label{ display:block; font-size:13px; margin-bottom:6px; }
+.danger-body code{ background:var(--surface-2); border:1px solid var(--line); padding:1px 7px; border-radius:6px; font-weight:700; }
+
 .empty{ text-align:center; color:var(--muted); padding:40px 16px; }
 /* Empty state (D14: icon + title + description + optional action) */
 .empty-state{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:7px; padding:34px 18px; }

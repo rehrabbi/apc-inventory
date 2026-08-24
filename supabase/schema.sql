@@ -230,6 +230,16 @@ $$;
 create function is_manager() returns boolean stable security definer language sql as $$
   select exists(select 1 from profiles where auth_uid = auth.uid() and is_active and role = 'manager');
 $$;
+-- The single owner account (settings.owner_email) allowed to run destructive admin actions.
+create function is_owner() returns boolean stable security definer set search_path = public language sql as $$
+  select exists(
+    select 1 from profiles p
+    where p.auth_uid = auth.uid() and p.is_active
+      and lower(p.email) = lower(coalesce((select value from settings where key = 'owner_email'), ''))
+  );
+$$;
+revoke execute on function is_owner() from public, anon;
+grant  execute on function is_owner() to authenticated;
 create function my_profile_id() returns uuid stable security definer language sql as $$
   select id from profiles where auth_uid = auth.uid();
 $$;
@@ -524,6 +534,7 @@ create policy insert_txn on transactions for insert with check (
 -- Seed
 -- ============================================================================
 insert into settings(key, value) values ('near_expiry_days','30');
+insert into settings(key, value) values ('owner_email','apc.ai.opex@gmail.com');
 insert into units(name) values ('piece'),('bottle'),('box'),('pack'),('kg'),('ml');
 insert into categories(name) values ('Skincare'),('Supplements'),('Beverage'),('Food'),('Other');
 insert into reasons(label, kind) values
@@ -565,6 +576,36 @@ begin
 end $$;
 revoke execute on function make_backup() from public, anon;
 grant  execute on function make_backup() to authenticated;
+
+-- ============================================================================
+-- Owner danger zone (owner-only, destructive; each takes a backup first)
+-- ============================================================================
+create function admin_reset_activity() returns void
+  security definer set search_path = public language plpgsql as $$
+begin
+  if not is_owner() then raise exception 'Only the owner can reset activity.'; end if;
+  perform make_backup();
+  alter table transactions disable trigger trg_txn_no_delete;
+  delete from transactions where true;
+  alter table transactions enable trigger trg_txn_no_delete;
+  delete from batches where true;
+  delete from events where true;
+end $$;
+revoke execute on function admin_reset_activity() from public, anon;
+grant  execute on function admin_reset_activity() to authenticated;
+
+create function admin_delete_event(p_event uuid) returns void
+  security definer set search_path = public language plpgsql as $$
+begin
+  if not is_owner() then raise exception 'Only the owner can delete events.'; end if;
+  perform make_backup();
+  alter table transactions disable trigger trg_txn_no_delete;
+  delete from transactions where event_id = p_event;
+  alter table transactions enable trigger trg_txn_no_delete;
+  delete from events where id = p_event;
+end $$;
+revoke execute on function admin_delete_event(uuid) from public, anon;
+grant  execute on function admin_delete_event(uuid) to authenticated;
 
 -- Weekly automated backup (Sundays 02:00). Requires pg_cron (enable in Supabase → Database → Extensions).
 -- create extension if not exists pg_cron with schema extensions;

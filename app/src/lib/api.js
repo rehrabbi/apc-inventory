@@ -204,6 +204,21 @@ export async function addLookup(table, row) {
   if (error) throw error
 }
 
+// ---- Owner-only danger zone ----
+export async function isOwner() {
+  const { data, error } = await supabase.rpc('is_owner')
+  if (error) throw error
+  return !!data
+}
+export async function resetActivity() {
+  const { error } = await supabase.rpc('admin_reset_activity')
+  if (error) throw error
+}
+export async function deleteEvent(id) {
+  const { error } = await supabase.rpc('admin_delete_event', { p_event: id })
+  if (error) throw error
+}
+
 // ---- Events ----
 export async function listEvents() {
   const { data, error } = await supabase.from('events').select('*').order('created_at', { ascending: false })
