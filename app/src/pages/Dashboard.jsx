@@ -77,7 +77,7 @@ export default function Dashboard() {
               <div style={{ width: `${pct(d.channel.online)}%`, height: '100%', background: 'var(--brand)' }} /></div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}><span>Events</span><span className="num">{d.channel.event} · {pct(d.channel.event)}%</span></div>
             <div style={{ height: 10, background: 'var(--surface-2)', borderRadius: 999, overflow: 'hidden' }}>
-              <div style={{ width: `${pct(d.channel.event)}%`, height: '100%', background: 'var(--info)' }} /></div>
+              <div style={{ width: `${pct(d.channel.event)}%`, height: '100%', background: 'var(--accent)' }} /></div>
             {chanTotal === 0 && <div className="empty">No sales yet.</div>}
           </div>
         </div>
