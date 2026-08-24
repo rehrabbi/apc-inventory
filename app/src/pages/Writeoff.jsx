@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { listProducts, batchesForProduct, writeOff, recentWriteoffs } from '../lib/api'
+import { listProducts, productStockMap, batchesForProduct, writeOff, recentWriteoffs } from '../lib/api'
 import Banner from '../components/Banner'
 import EmptyState from '../components/EmptyState'
 import ProductSelect from '../components/ProductSelect'
@@ -16,6 +16,7 @@ const TYPES = [
 
 export default function Writeoff() {
   const [products, setProducts] = useState([])
+  const [stock, setStock] = useState({})
   const [batches, setBatches] = useState([])
   const [recent, setRecent] = useState([])
   const [productId, setProductId] = useState('')
@@ -29,7 +30,11 @@ export default function Writeoff() {
   const toast = useToast()
 
   async function loadRecent() { try { setRecent(await recentWriteoffs()) } catch (e) { setMsg({ type: 'err', text: e.message }) } }
-  useEffect(() => { listProducts().then(setProducts).catch(e => setMsg({ type: 'err', text: e.message })); loadRecent() }, [])
+  useEffect(() => {
+    listProducts().then(setProducts).catch(e => setMsg({ type: 'err', text: e.message }))
+    productStockMap().then(setStock).catch(() => {})
+    loadRecent()
+  }, [])
   useEffect(() => {
     setBatchId('')
     if (!productId) { setBatches([]); return }
@@ -46,7 +51,7 @@ export default function Writeoff() {
       const label = TYPES.find(t => t.v === type)?.l
       toast.success(`Wrote off ${qty} unit(s): ${label}.`)
       setQty(''); setNote('')
-      setBatches(await batchesForProduct(productId)); loadRecent()
+      setBatches(await batchesForProduct(productId)); productStockMap().then(setStock).catch(() => {}); loadRecent()
     } catch (e) { setMsg({ type: 'err', text: e.message }) } finally { setSaving(false) }
   }
 
@@ -62,7 +67,7 @@ export default function Writeoff() {
           <div className="card-b">
             <div className="form-grid">
               <div className="field full"><label htmlFor="wo-product">Product *</label>
-                <ProductSelect id="wo-product" products={products} value={productId}
+                <ProductSelect id="wo-product" products={products.filter(p => Number(stock[p.id] ?? 0) > 0)} value={productId}
                   onChange={setProductId} onCreated={(row) => setProducts(ps => [...ps, row])} />
               </div>
               <div className="field full"><label htmlFor="wo-batch">Batch *</label>

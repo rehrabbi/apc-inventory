@@ -84,7 +84,7 @@ export default function Sell() {
                   {lines.map((l, i) => (
                     <tr key={l.id}>
                       <td>
-                        <ProductSelect products={products} value={l.product} placeholder="Select…"
+                        <ProductSelect products={products.filter(p => Number(stock[p.id] ?? 0) > 0)} value={l.product} placeholder="Select…"
                           hideSupplies
                           aria-label={`Product for line ${i + 1}`}
                           onChange={(pid) => setLineProduct(i, pid)}

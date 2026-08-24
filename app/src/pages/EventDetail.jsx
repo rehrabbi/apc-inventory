@@ -6,7 +6,7 @@ import Icon from '../components/Icon'
 import Banner from '../components/Banner'
 import { useToast } from '../components/Toast'
 import {
-  getEvent, eventReconcile, listProducts,
+  getEvent, eventReconcile, listProducts, productStockMap,
   eventRelease, eventConsume, eventReturnStock, closeEvent,
 } from '../lib/api'
 
@@ -18,6 +18,7 @@ export default function EventDetail() {
   const [event, setEvent] = useState(null)
   const [rows, setRows] = useState([])
   const [products, setProducts] = useState([])
+  const [stock, setStock] = useState({})
   const [msg, setMsg] = useState(null)
   const [busy, setBusy] = useState(false)
   const [confirmClose, setConfirmClose] = useState(false)
@@ -30,13 +31,14 @@ export default function EventDetail() {
 
   async function load() {
     try {
-      const [ev, rec, prods] = await Promise.all([getEvent(id), eventReconcile(id), listProducts()])
-      setEvent(ev); setRows(rec); setProducts(prods)
+      const [ev, rec, prods, sm] = await Promise.all([getEvent(id), eventReconcile(id), listProducts(), productStockMap()])
+      setEvent(ev); setRows(rec); setProducts(prods); setStock(sm)
     } catch (e) { setMsg({ type: 'err', text: e.message }) }
   }
   useEffect(() => { load() }, [id])
 
   const poolProducts = useMemo(() => rows.filter(r => Number(r.remaining) > 0), [rows])
+  const releasable = useMemo(() => products.filter(p => Number(stock[p.id] ?? 0) > 0), [products, stock])
   const totalRemaining = rows.reduce((s, r) => s + Number(r.remaining), 0)
   const active = event?.status === 'active'
 
@@ -82,7 +84,8 @@ export default function EventDetail() {
             <div className="card-b">
               <div className="field" style={{ marginBottom: 10 }}><label htmlFor="ed-rel-prod">Product</label>
                 <select id="ed-rel-prod" className="select" value={relProd} onChange={e => setRelProd(e.target.value)}>
-                  <option value="">Select…</option>{products.map(p => <option key={p.id} value={p.id}>{p.sku} · {p.name}</option>)}
+                  <option value="">{releasable.length ? 'Select…' : 'No warehouse stock available'}</option>
+                  {releasable.map(p => <option key={p.id} value={p.id}>{p.sku} · {p.name} ({Number(stock[p.id] ?? 0)} in warehouse)</option>)}
                 </select></div>
               <div className="toolbar" style={{ marginBottom: 0 }}>
                 <input className="input" type="number" min="0" aria-label="Release quantity" placeholder="Qty" value={relQty} onChange={e => setRelQty(e.target.value)} />

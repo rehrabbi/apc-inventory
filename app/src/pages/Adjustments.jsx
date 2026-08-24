@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { listProducts, batchesForProduct, listReasons, adjustStock } from '../lib/api'
+import { listProducts, productStockMap, batchesForProduct, listReasons, adjustStock } from '../lib/api'
 import Banner from '../components/Banner'
 import ProductSelect from '../components/ProductSelect'
 import { useToast } from '../components/Toast'
@@ -8,6 +8,7 @@ const today = () => new Date().toISOString().slice(0, 10)
 
 export default function Adjustments() {
   const [products, setProducts] = useState([])
+  const [stock, setStock] = useState({})
   const [batches, setBatches] = useState([])
   const [reasons, setReasons] = useState([])
   const [productId, setProductId] = useState('')
@@ -22,6 +23,7 @@ export default function Adjustments() {
 
   useEffect(() => {
     listProducts().then(setProducts).catch(e => setMsg({ type: 'err', text: e.message }))
+    productStockMap().then(setStock).catch(() => {})
     listReasons('adjustment').then(setReasons).catch(() => {})
   }, [])
   useEffect(() => {
@@ -44,7 +46,7 @@ export default function Adjustments() {
       await adjustStock({ product: productId, batch: batchId, actual: Number(actual), reason, note: note.trim() || null, effective: eff })
       toast.success(`Adjusted ${currentBatch?.code} to ${actual} (${diff > 0 ? '+' : ''}${diff}).`)
       setActual(''); setNote('')
-      setBatches(await batchesForProduct(productId))
+      setBatches(await batchesForProduct(productId)); productStockMap().then(setStock).catch(() => {})
     } catch (e) { setMsg({ type: 'err', text: e.message }) } finally { setSaving(false) }
   }
 
@@ -57,7 +59,7 @@ export default function Adjustments() {
         <div className="card-b">
           <div className="form-grid">
             <div className="field full"><label htmlFor="adj-product">Product *</label>
-              <ProductSelect id="adj-product" products={products} value={productId}
+              <ProductSelect id="adj-product" products={products.filter(p => Number(stock[p.id] ?? 0) > 0)} value={productId}
                 onChange={setProductId} onCreated={(row) => setProducts(ps => [...ps, row])} />
             </div>
             <div className="field full"><label htmlFor="adj-batch">Batch *</label>
