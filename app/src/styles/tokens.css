@@ -4,24 +4,26 @@
    ========================================================================== */
 
 :root{
-  /* Brand */
-  --brand:#D81F26; --brand-strong:#B71C22; --brand-tint:#F4E7E7;
-  /* Warm neutrals */
-  --canvas:#F1EBE5; --surface:#FFFFFF; --surface-2:#F5EFE9; --surface-3:#EDE4DC;
-  --ink:#211C19; --ink-2:#5C534C; --muted:#6E635B; --line:#E7DED6; --line-strong:#D6CCC2;
-  /* Primary action */
-  --primary:#211C19; --primary-ink:#FDF6F1; --primary-hover:#332B26;
+  /* Brand (Primary #CA181F) + Secondary #F8C37F + Accent #D36F6F */
+  --brand:#CA181F; --brand-strong:#A8141A; --brand-tint:#FBE7E8;
+  --secondary:#F8C37F; --secondary-tint:#FDEFDA; --secondary-ink:#5A3B0E;
+  --accent:#D36F6F; --accent-tint:#F7E4E4; --accent-ink:#6E2A2A;
+  /* Neutrals (background #FCFAFA, text #090304) */
+  --canvas:#FCFAFA; --surface:#FFFFFF; --surface-2:#F4F1F1; --surface-3:#EBE6E6;
+  --ink:#090304; --ink-2:#4A4446; --muted:#6E6668; --line:#E9E4E4; --line-strong:#D9D3D3;
+  /* Primary action (dark neutral, kept distinct from the red danger button) */
+  --primary:#211C1A; --primary-ink:#FCFAFA; --primary-hover:#3A312E;
   /* Semantic (kept separate from brand red) */
   --ok:#1E7A48;   --ok-bg:#E4F1E9;  --ok-ink:#14532D;
   --warn:#9A6700; --warn-bg:#FBEFCF; --warn-ink:#6B4700;
   --soon:#B45309; --soon-bg:#FBEAD3; --soon-ink:#7C3B06;
-  --crit:#C1121F; --crit-bg:#FBE3E3; --crit-ink:#7A0C14;
+  --crit:#CA181F; --crit-bg:#FBE7E8; --crit-ink:#7A0C10;
   --info:#3B5567; --info-bg:#E5EDF1;
   /* Solid status badges (D7): white text on a deep fill, AA in light mode */
   --badge-ok-bg:#176B3E;  --badge-ok-fg:#FFFFFF;
   --badge-warn-bg:#875800; --badge-warn-fg:#FFFFFF;
   --badge-soon-bg:#A4470A; --badge-soon-fg:#FFFFFF;
-  --badge-crit-bg:#C1121F; --badge-crit-fg:#FFFFFF;
+  --badge-crit-bg:#CA181F; --badge-crit-fg:#FFFFFF;
   --badge-info-bg:#3B5567; --badge-info-fg:#FFFFFF;
   /* Focus (D18): solid ring + soft glow */
   --focus:var(--brand);
@@ -44,10 +46,12 @@
    not the OS, so unmigrated screens and inherited text track the in-app toggle. */
 :root[data-mantine-color-scheme="dark"]{
   color-scheme:dark;
-  --canvas:#1A1614; --surface:#221C19; --surface-2:#2A231F; --surface-3:#332A25;
-  --ink:#F1E9E3; --ink-2:#C9BEB5; --muted:#A79C93; --line:#362D28; --line-strong:#463B34;
-  --brand:#E5484D; --brand-tint:#3A211F;
-  --primary:#EDE4DC; --primary-ink:#1A1614; --primary-hover:#DED2C8;
+  --canvas:#0E0B0C; --surface:#171314; --surface-2:#201B1D; --surface-3:#2A2426;
+  --ink:#F5F1EF; --ink-2:#C7BFBB; --muted:#A79F9F; --line:#322B2D; --line-strong:#40383A;
+  --brand:#E5484D; --brand-tint:#3A1F20;
+  --secondary:#F0B972; --secondary-tint:#33280F; --secondary-ink:#F8C37F;
+  --accent:#DE8888; --accent-tint:#361F1F; --accent-ink:#F3C9C9;
+  --primary:#EDE6E2; --primary-ink:#0E0B0C; --primary-hover:#DED5D0;
   --ok:#46B67C; --ok-bg:#14311F; --ok-ink:#B6ECCB;
   --warn:#D6A036; --warn-bg:#34280E; --warn-ink:#F3D89A;
   --soon:#DE8A3E; --soon-bg:#35220F; --soon-ink:#F3C99B;

@@ -4,21 +4,21 @@
 import { createTheme, rem } from '@mantine/core'
 
 // --- Brand ---------------------------------------------------------------
-// #D81F26 is the APC crimson and MUST stay exactly this value at index 6.
-// Crimson is a controlled accent: focus rings, the logo mark, the active rail
-// marker, destructive text. It is never a background wash.
+// #CA181F is the APC brand red (matches the logo) and MUST stay exactly this
+// value at index 6. It is a controlled accent: focus rings, the active rail
+// marker, primary Mantine actions, destructive text. Never a background wash.
 const crimson = [
-  '#FDF2F2', '#FBE3E3', '#F5C4C6', '#EE9EA1', '#E76F74',
-  '#E14349', '#D81F26', '#C21B21', '#A11419', '#7A0F13',
+  '#FDF2F2', '#FBE4E4', '#F4C3C5', '#EC9C9F', '#E46E72',
+  '#DB3B41', '#CA181F', '#AF141A', '#8E1015', '#6C0C10',
 ]
 
 // --- Neutrals ------------------------------------------------------------
-// Cool grey ramp. index 5 (#626B75) is the muted text token: it clears WCAG AA
-// on both the page background (#F4F6F8, 4.96:1) and the table header fill
-// (#FBFCFD, 5.05:1). Do not lighten it.
+// Near-neutral warm grey ramp keyed to the palette (bg #FCFAFA, text #090304).
+// index 5 (#6E6668) is the muted text token: it clears WCAG AA on white
+// (~5.0:1) and the surface-alt fill. Do not lighten it.
 const slate = [
-  '#F4F6F8', '#ECEFF3', '#E2E5E9', '#D3D8DE', '#98A1AB',
-  '#626B75', '#414851', '#2B3038', '#1C2026', '#14171C',
+  '#FCFAFA', '#F4F1F1', '#E9E4E4', '#D9D3D3', '#A49C9D',
+  '#6E6668', '#4A4446', '#241F21', '#171314', '#0E0B0C',
 ]
 
 export const semantic = {
@@ -90,10 +90,10 @@ export const cssVariablesResolver = (t) => ({
   light: {
     '--apc-page': t.colors.slate[0],
     '--apc-surface': '#FFFFFF',
-    '--apc-surface-alt': '#FBFCFD',
+    '--apc-surface-alt': '#FBF9F9',
     '--apc-border': t.colors.slate[2],
     '--apc-border-strong': t.colors.slate[3],
-    '--apc-text': '#181C22',
+    '--apc-text': '#090304',
     '--apc-text-muted': t.colors.slate[5],
     '--apc-ok-fg': semantic.ok.fg,       '--apc-ok-bg': semantic.ok.bg,       '--apc-ok-border': semantic.ok.border,       '--apc-ok-dot': semantic.ok.dot,
     '--apc-warn-fg': semantic.warn.fg,   '--apc-warn-bg': semantic.warn.bg,   '--apc-warn-border': semantic.warn.border,   '--apc-warn-dot': semantic.warn.dot,
@@ -102,11 +102,11 @@ export const cssVariablesResolver = (t) => ({
   dark: {
     '--apc-page': t.colors.slate[9],
     '--apc-surface': t.colors.slate[8],
-    '--apc-surface-alt': '#20242B',
-    '--apc-border': '#2F343B',
-    '--apc-border-strong': '#3A4048',
-    '--apc-text': '#F2F4F7',
-    '--apc-text-muted': '#A8B0BA',
+    '--apc-surface-alt': '#201B1D',
+    '--apc-border': '#322B2D',
+    '--apc-border-strong': '#40383A',
+    '--apc-text': '#F5F1EF',
+    '--apc-text-muted': '#A79F9F',
     '--apc-ok-fg': semanticDark.ok.fg,       '--apc-ok-bg': semanticDark.ok.bg,       '--apc-ok-border': semanticDark.ok.border,       '--apc-ok-dot': semanticDark.ok.dot,
     '--apc-warn-fg': semanticDark.warn.fg,   '--apc-warn-bg': semanticDark.warn.bg,   '--apc-warn-border': semanticDark.warn.border,   '--apc-warn-dot': semanticDark.warn.dot,
     '--apc-crit-fg': semanticDark.critical.fg, '--apc-crit-bg': semanticDark.critical.bg, '--apc-crit-border': semanticDark.critical.border, '--apc-crit-dot': semanticDark.critical.dot,
