@@ -82,6 +82,15 @@
 /* ---- Forms ---- */
 .form-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; }
 .form-grid .full{ grid-column:1/-1; }
+
+/* Phone polish: stack toolbar controls full-width for easy tapping, add momentum scroll to
+   wide tables. Layout grids (form-grid, tiles) already reflow by container width. */
+@media (max-width: 640px){
+  .toolbar{ flex-direction:column; align-items:stretch; }
+  .toolbar .spacer{ display:none; }
+  .toolbar .search-wrap, .toolbar .search, .toolbar .select, .toolbar .btn{ width:100%; max-width:none !important; }
+  .table-wrap{ -webkit-overflow-scrolling:touch; }
+}
 /* Custom checkbox (D11) */
 .check{ display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; }
 .check input[type="checkbox"]{ appearance:none; -webkit-appearance:none; width:20px; height:20px; margin:0; flex:none;
